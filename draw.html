@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport" />
+<meta charset="UTF-8">
+<title>抽奖</title>
+<style>
+body{
+	margin: 0;
+}
+ul{
+	list-style: none;
+	padding: 0;
+	margin: 0;
+}
+.user-list{
+	width: 1000px;
+	height: 300px;
+	margin: 200px auto 0 auto;
+	padding: 30px 0;
+	overflow: hidden;
+	position: relative;
+}
+.user-list ul{
+	width: auto;
+	height: 300px;
+	position: absolute;
+	top: 30px;
+	/*left: -1000px;*/
+}
+.user-list ul li{
+	float: left;
+	width: 200px;
+	height: 300px;
+	text-align: center;
+	position: relative;
+	z-index: 1;
+}
+.user{
+	display: inline-block;
+	position: relative;
+	width: 100%;
+	height: 100%;
+}
+.name{
+	position: absolute;
+	bottom: 0;
+	width: 100%;
+	height: 40px;
+	text-align: center;
+	line-height: 40px;
+	color: white;
+	background-color: rgba(0,0,0,.6);
+	font-size: 20px;
+}
+.user-block>div{
+	/*visibility:hidden;*/
+}
+.drawButton{
+	width: 200px;
+	height: 50px;
+	margin: 100px auto 0 auto;
+	text-align: center;
+	line-height: 50px;
+	background-color: #EEA904;
+	color: white;
+	cursor: pointer;
+}
+.drawButton[disabled]{
+	background-color: #aaa;
+}
+</style>
+</head>
+<body>
+<div class="user-list">
+	<ul>
+	</ul>
+</div>
+<div class="drawButton">
+	抽奖
+</div>
+</body>
+<script type="text/javascript" src="jquery-1.11.3.min.js"></script>
+<script>
+	var user=[
+		{'name':'1','src':'1'},//0
+		{'name':'2','src':'2'},
+		{'name':'3','src':'3'},
+		{'name':'4','src':'4'},//3
+		{'name':'5','src':'5'},
+		{'name':'6','src':'6'},
+		{'name':'7','src':'7'},//6
+		{'name':'8','src':'8'},
+		{'name':'9','src':'9'},
+		{'name':'10','src':'10'},//9
+		{'name':'11','src':'11'},
+		{'name':'12','src':'12'},
+		{'name':'13','src':'13'}
+	];
+	var v_a=10;
+	var v_x=0;
+	$(function(){
+		initpage();
+		drawInit();
+	});
+	function initpage(){
+		function getAllElement(){
+			var total=user.length;
+			var html='';
+			html+='<li><div class="user" style="background: url(images/'+user[total-5].src+'.jpg) no-repeat;background-size:cover;"><div class="name">'+user[total-3].name+'</div></div></li>';
+			html+='<li><div class="user" style="background: url(images/'+user[total-4].src+'.jpg) no-repeat;background-size:cover;"><div class="name">'+user[total-2].name+'</div></div></li>';
+			html+='<li><div class="user" style="background: url(images/'+user[total-3].src+'.jpg) no-repeat;background-size:cover;"><div class="name">'+user[total-3].name+'</div></div></li>';
+			html+='<li><div class="user" style="background: url(images/'+user[total-2].src+'.jpg) no-repeat;background-size:cover;"><div class="name">'+user[total-2].name+'</div></div></li>';
+			html+='<li><div class="user" style="background: url(images/'+user[total-1].src+'.jpg) no-repeat;background-size:cover;"><div class="name">'+user[total-1].name+'</div></div></li>';
+			for (i in user) {
+				var obj=user[i];
+				html+='<li><div class="user" style="background: url(images/'+obj.src+'.jpg) no-repeat;background-size:cover;"><div class="name">'+obj.name+'</div></div></li>';
+			}
+			html+='<li><div class="user" style="background: url(images/'+user[0].src+'.jpg) no-repeat;background-size:cover;"><div class="name">'+user[0].name+'</div></div></li>';
+			html+='<li><div class="user" style="background: url(images/'+user[1].src+'.jpg) no-repeat;background-size:cover;"><div class="name">'+user[1].name+'</div></div></li>';
+			html+='<li><div class="user" style="background: url(images/'+user[2].src+'.jpg) no-repeat;background-size:cover;"><div class="name">'+user[2].name+'</div></div></li>';
+			html+='<li><div class="user" style="background: url(images/'+user[3].src+'.jpg) no-repeat;background-size:cover;"><div class="name">'+user[0].name+'</div></div></li>';
+			html+='<li><div class="user" style="background: url(images/'+user[4].src+'.jpg) no-repeat;background-size:cover;"><div class="name">'+user[1].name+'</div></div></li>';
+			return html;
+		}
+		function fillElement(){
+			var html=getAllElement();
+			var total=user.length;
+			var center=getCenter();
+			console.log(user[center].name);
+			$('.user-list ul').html(html).css({'left':'-'+(center+3)*200+'px','width':(total+10)*200});
+		}
+		fillElement();
+	}
+	function drawInit(){
+		function getWinner(){
+			var winner=getCenter();
+			return winner;
+		}
+		
+		function userAnimation(){
+			var total=user.length;
+			var currentPosition=parseInt($('.user-list ul').css('left'));
+			var nextPosition=currentPosition+(-v_x);
+			if (nextPosition<=-(total+4)*200) {
+				$('.user-list ul').css({'left':'-800px'});
+			}
+			else{
+				$('.user-list ul').css({'left':nextPosition+'px'});
+			}
+			
+			if (v_a>0) {
+				if (v_x<=300) {v_x+=v_a;}
+			}
+			else{
+				if (v_x<=50) {
+
+				}
+				else{
+					v_x+=v_a;
+				}
+			}
+		}
+		function drawClick(){
+			$('.drawButton').click(function(){
+				if ($(this).attr('disabled')) return;
+				$(this).attr('disabled','true');
+				v_a=10;
+				var winner=getCenter();
+				var winnerPosition='-'+(winner+3)*200;
+				console.log(user[winner].name);console.log(winnerPosition);
+				var interVal=setInterval(function(){
+					if (v_x>=300) {
+						v_a=-8;
+					}
+					if (v_a<0&&v_x<=50) {
+						var current=parseInt($('.user-list ul').css('left'));
+						if ((current-v_x)<=winnerPosition&&winnerPosition<=current) {
+							$('.user-list ul').css({'left':winnerPosition+'px'});
+							clearInterval(interVal);
+							
+							v_a=0;
+							v_x=0;
+							$('.user-list ul li:nth-child('+(winner+6)+')').css({'transform': 'scale(1.2,1.2)','z-index':'10','cursor':'pointer'}).addClass('winner').attr({'winner':winner});
+							winnerClick();
+							return;
+						}
+					}
+					userAnimation();
+				}, 100);
+			});
+		}
+		drawClick();
+	}
+	function winnerClick(){
+		$('.winner').click(function(){
+			var winner=$(this).attr('winner');
+			user.splice(winner,1);
+			initpage();
+			$('.drawButton').removeAttr('disabled');
+		});
+	}
+	function getCenter(){
+		var total=user.length;
+		var center=Math.floor(Math.random()*total);
+		return center;
+	}
+</script>
+</html>
